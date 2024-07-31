@@ -6,19 +6,20 @@ using System.Threading;
 namespace WebApplication1
 
 {
-    class Programa
+    class ProgramaDeMensajería
     {
         static void Main(string[] args)
         {   
-            Console.WriteLine("Bienvenido al chat. Ingrese su número de puerto:");
+            //Para ingresar el puerto
+            Console.WriteLine("Bienvenido al chat. Ingrese el número de puerto al que desea conectarse:");
             int port = int.Parse(Console.ReadLine());
-
+            //Para intentar la coneccion
             var cliente = new TcpClient();
             cliente.Connect(IPAddress.Loopback, port);
 
             var stream = cliente.GetStream();
 
-            // Hilo para recibir mensajes
+            // Parte para recibir mensajes
             var recibirHilo = new Thread(() =>
             {
                 while (true)
@@ -26,12 +27,12 @@ namespace WebApplication1
                     byte[] buffer = new byte[1024];
                     int bytesRead = stream.Read(buffer, 0, buffer.Length);
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    Console.WriteLine("Mensaje recibido: " + message);
+                    Console.WriteLine("Mensaje nuevo: " + message);
                 }
             });
             recibirHilo.Start();
 
-            // Hilo para enviar mensajes
+            // Parte para enviar mensajes
             var enviarHilo = new Thread(() =>
             {
                 while (true)
@@ -43,7 +44,7 @@ namespace WebApplication1
             });
             enviarHilo.Start();
 
-            // Mantener la aplicación en ejecución
+            // Para mantener la aplicación en ejecución
             enviarHilo.Join();
         }
     }
